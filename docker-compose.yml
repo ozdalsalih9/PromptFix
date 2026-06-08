@@ -11,4 +11,4 @@ services:
       ASPNETCORE_URLS: http://127.0.0.1:5064
       OLLAMA__BASEURL: http://127.0.0.1:11434
       OLLAMA__MODEL: promptforge:4b
-      OLLAMA__TIMEOUTSECONDS: 60
+      OLLAMA__TIMEOUTSECONDS: 180

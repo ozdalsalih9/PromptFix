@@ -93,10 +93,32 @@ async function improvePrompt(input: {
 
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(text || `Request failed with status ${response.status}`)
+    throw new Error(parseApiError(text) || `Request failed with status ${response.status}`)
   }
 
   return response.json()
+}
+
+function parseApiError(text: string) {
+  if (!text) {
+    return ''
+  }
+
+  try {
+    const parsed = JSON.parse(text) as { message?: string; title?: string; errors?: Record<string, string[]> }
+
+    if (parsed.message) {
+      return parsed.message
+    }
+
+    if (parsed.errors) {
+      return Object.values(parsed.errors).flat().join(' ')
+    }
+
+    return parsed.title ?? text
+  } catch {
+    return text
+  }
 }
 
 function App() {

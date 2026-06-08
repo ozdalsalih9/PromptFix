@@ -46,7 +46,7 @@ public sealed class OllamaService : IOllamaService
         }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new OllamaUnavailableException("Ollama request timed out. Try again in a moment.");
+            throw new OllamaUnavailableException("The local model took too long to respond. Try a shorter prompt or try again after the model warms up.");
         }
         catch (HttpRequestException ex)
         {
@@ -54,7 +54,7 @@ public sealed class OllamaService : IOllamaService
         }
         catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
         {
-            throw new OllamaUnavailableException("Ollama request timed out. Try again in a moment.", ex);
+            throw new OllamaUnavailableException("The local model took too long to respond. Try a shorter prompt or try again after the model warms up.", ex);
         }
     }
 

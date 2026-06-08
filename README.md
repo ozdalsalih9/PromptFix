@@ -72,7 +72,7 @@ Default config is in `src/PromptFix.Api/appsettings.json`:
   "Ollama": {
     "BaseUrl": "http://localhost:11434",
     "Model": "promptforge:4b",
-    "TimeoutSeconds": 60
+    "TimeoutSeconds": 180
   }
 }
 ```
@@ -82,7 +82,7 @@ Environment variable overrides:
 ```powershell
 $env:OLLAMA__BASEURL="http://localhost:11434"
 $env:OLLAMA__MODEL="promptforge:4b"
-$env:OLLAMA__TIMEOUTSECONDS="60"
+$env:OLLAMA__TIMEOUTSECONDS="180"
 dotnet run --project src/PromptFix.Api
 ```
 
