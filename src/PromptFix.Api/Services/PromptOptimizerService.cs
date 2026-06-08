@@ -1,4 +1,3 @@
-using System.Text.Json;
 using PromptFix.Api.Configuration;
 using PromptFix.Api.Models;
 using Microsoft.Extensions.Options;
@@ -7,8 +6,6 @@ namespace PromptFix.Api.Services;
 
 public sealed class PromptOptimizerService : IPromptOptimizerService
 {
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
-
     private readonly IOllamaService _ollamaService;
     private readonly IModelConcurrencyGate _concurrencyGate;
     private readonly OllamaOptions _options;
@@ -31,96 +28,28 @@ public sealed class PromptOptimizerService : IPromptOptimizerService
             throw new ModelBusyException("The local model is busy. Please try again in a few seconds.");
         }
 
-        var rawOutput = await _ollamaService.ChatAsync(BuildMessages(request), cancellationToken);
-        return ParseResponse(rawOutput);
+        var improvedPrompt = await _ollamaService.GenerateAsync(BuildPrompt(request), cancellationToken);
+        return BuildResponse(improvedPrompt);
     }
 
-    private IReadOnlyList<OllamaMessage> BuildMessages(PromptImproveRequest request)
+    private string BuildPrompt(PromptImproveRequest request)
     {
         var mode = PromptOptionCatalog.Modes[request.Mode!];
         var language = PromptOptionCatalog.Languages[request.Language!];
         var style = PromptOptionCatalog.Styles[request.Style!];
 
-        var systemPrompt = """
-            /no_think
-            You are PromptForge. Rewrite weak prompts into better prompts.
-            Do not answer the original task.
-            Do not think step by step.
-            Do not output analysis, reasoning, markdown, or explanations outside JSON.
-            Return one compact JSON object only:
-            {"improvedPrompt":"string","shortVersion":"string","whyBetter":["string"],"missingContext":["string"]}
-            """;
-
-        var userPrompt = $$"""
-            /no_think
-            Mode: {{mode}}
-            Language: {{language}}
-            Style: {{style}}
-
-            Rewrite this prompt. Return JSON only:
-            {{request.Prompt!.Trim()}}
-            """;
-
-        return
-        [
-            new OllamaMessage("system", systemPrompt),
-            new OllamaMessage("user", userPrompt)
-        ];
+        return $"Rewrite this weak prompt into a better prompt. Do not answer the request. Return only the improved prompt. Mode: {mode}. Language: {language}. Style: {style}. Prompt: {request.Prompt!.Trim()}";
     }
 
-    private PromptImproveResponse ParseResponse(string rawOutput)
+    private PromptImproveResponse BuildResponse(string improvedPrompt)
     {
-        var json = ExtractJsonObject(rawOutput);
-
-        try
-        {
-            var parsed = JsonSerializer.Deserialize<OllamaPromptPayload>(json, JsonOptions);
-
-            if (parsed is not null && !string.IsNullOrWhiteSpace(parsed.ImprovedPrompt))
-            {
-                return new PromptImproveResponse(
-                    parsed.ImprovedPrompt.Trim(),
-                    string.IsNullOrWhiteSpace(parsed.ShortVersion) ? parsed.ImprovedPrompt.Trim() : parsed.ShortVersion.Trim(),
-                    NormalizeList(parsed.WhyBetter),
-                    NormalizeList(parsed.MissingContext),
-                    _options.Model);
-            }
-        }
-        catch (JsonException)
-        {
-            // Fall through to a safe response that still gives the user the model output.
-        }
+        var normalized = improvedPrompt.Trim();
 
         return new PromptImproveResponse(
-            rawOutput.Trim(),
-            rawOutput.Trim(),
-            ["The local model returned text that could not be parsed as the expected JSON shape."],
+            normalized,
+            normalized,
+            ["Rewrites the request as a clearer, copy-paste-ready prompt."],
             [],
             _options.Model);
     }
-
-    private static IReadOnlyList<string> NormalizeList(IReadOnlyList<string>? values)
-    {
-        return values?
-            .Where(value => !string.IsNullOrWhiteSpace(value))
-            .Select(value => value.Trim())
-            .ToArray()
-            ?? [];
-    }
-
-    private static string ExtractJsonObject(string value)
-    {
-        var start = value.IndexOf('{');
-        var end = value.LastIndexOf('}');
-
-        return start >= 0 && end > start
-            ? value[start..(end + 1)]
-            : value;
-    }
-
-    private sealed record OllamaPromptPayload(
-        string? ImprovedPrompt,
-        string? ShortVersion,
-        IReadOnlyList<string>? WhyBetter,
-        IReadOnlyList<string>? MissingContext);
 }

@@ -6,7 +6,7 @@ public sealed class OllamaOptions
 
     public string BaseUrl { get; set; } = "http://localhost:11434";
 
-    public string Model { get; set; } = "promptforge:2b";
+    public string Model { get; set; } = "qwen3.5:2b";
 
     public int TimeoutSeconds { get; set; } = 90;
 
@@ -17,4 +17,6 @@ public sealed class OllamaOptions
     public int NumPredict { get; set; } = 180;
 
     public double TopP { get; set; } = 0.9;
+
+    public string KeepAlive { get; set; } = "10m";
 }

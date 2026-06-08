@@ -10,7 +10,7 @@ It is not an OpenAI wrapper and does not call any paid external AI API. The exte
 Chrome Extension
     -> HTTPS ASP.NET Core API
         -> http://localhost:11434 Ollama API
-            -> promptforge:2b local model
+            -> qwen3.5:2b local model
 ```
 
 Ollama must stay private. Do not expose port `11434` to the public internet.
@@ -21,8 +21,7 @@ Ollama must stay private. Do not expose port `11434` to the public internet.
 - Extension: React + TypeScript + Vite
 - Extension standard: Chrome Manifest V3
 - Local LLM runtime: Ollama
-- Base model: `qwen3.5:2b` or the closest 2B Qwen model available on your VPS
-- Custom model profile: `promptforge:2b`
+- Model: `qwen3.5:2b`
 
 ## Features
 
@@ -43,9 +42,7 @@ Ollama must stay private. Do not expose port `11434` to the public internet.
 On the VPS:
 
 ```bash
-ollama list
 ollama pull qwen3.5:2b
-ollama create promptforge:2b -f ollama/Modelfile.promptforge-2b
 ollama list
 ```
 
@@ -72,7 +69,7 @@ Default config is in `src/PromptFix.Api/appsettings.json`:
 {
   "Ollama": {
     "BaseUrl": "http://localhost:11434",
-    "Model": "promptforge:2b",
+    "Model": "qwen3.5:2b",
     "TimeoutSeconds": 90
   }
 }
@@ -82,7 +79,7 @@ Environment variable overrides:
 
 ```powershell
 $env:OLLAMA__BASEURL="http://localhost:11434"
-$env:OLLAMA__MODEL="promptforge:2b"
+$env:OLLAMA__MODEL="qwen3.5:2b"
 $env:OLLAMA__TIMEOUTSECONDS="90"
 dotnet run --project src/PromptFix.Api
 ```
@@ -109,7 +106,6 @@ Use this on a Linux VPS when Ollama is already installed on the host. The compos
 git clone https://github.com/ozdalsalih9/PromptFix.git
 cd PromptFix
 ollama list
-ollama create promptforge:2b -f ollama/Modelfile.promptforge-2b
 docker compose up -d --build
 ```
 

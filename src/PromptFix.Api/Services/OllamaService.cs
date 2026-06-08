@@ -16,13 +16,14 @@ public sealed class OllamaService : IOllamaService
         _options = options.Value;
     }
 
-    public async Task<string> ChatAsync(IReadOnlyList<OllamaMessage> messages, CancellationToken cancellationToken)
+    public async Task<string> GenerateAsync(string prompt, CancellationToken cancellationToken)
     {
-        var request = new OllamaChatRequest(
+        var request = new OllamaGenerateRequest(
             _options.Model,
-            messages,
+            prompt,
             false,
-            "json",
+            false,
+            _options.KeepAlive,
             new OllamaRequestOptions(
                 _options.Temperature,
                 _options.NumContext,
@@ -31,11 +32,11 @@ public sealed class OllamaService : IOllamaService
 
         try
         {
-            using var response = await _httpClient.PostAsJsonAsync("/api/chat", request, cancellationToken);
+            using var response = await _httpClient.PostAsJsonAsync("/api/generate", request, cancellationToken);
             response.EnsureSuccessStatusCode();
 
-            var ollamaResponse = await response.Content.ReadFromJsonAsync<OllamaChatResponse>(cancellationToken);
-            var content = ollamaResponse?.Message?.Content;
+            var ollamaResponse = await response.Content.ReadFromJsonAsync<OllamaGenerateResponse>(cancellationToken);
+            var content = ollamaResponse?.Response;
 
             if (string.IsNullOrWhiteSpace(content))
             {

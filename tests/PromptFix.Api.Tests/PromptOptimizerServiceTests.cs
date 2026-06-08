@@ -8,30 +8,23 @@ namespace PromptFix.Api.Tests;
 public sealed class PromptOptimizerServiceTests
 {
     [Fact]
-    public async Task ImproveAsyncReturnsStableResponseFromOllamaJson()
+    public async Task ImproveAsyncReturnsStableResponseFromGeneratedPrompt()
     {
-        var service = CreateService(new FakeOllamaService("""
-            {
-              "improvedPrompt": "Act as a senior ATS resume writer...",
-              "shortVersion": "Create an ATS-friendly CV.",
-              "whyBetter": ["Adds role and context.", "Defines output expectations."],
-              "missingContext": ["Education", "Experience"]
-            }
-            """));
+        var service = CreateService(new FakeOllamaService("Act as a senior ATS resume writer..."));
 
         var response = await service.ImproveAsync(
             new PromptImproveRequest("bana cv hazirla", "career", "auto", "professional"),
             CancellationToken.None);
 
         Assert.Equal("Act as a senior ATS resume writer...", response.ImprovedPrompt);
-        Assert.Equal("Create an ATS-friendly CV.", response.ShortVersion);
-        Assert.Equal(2, response.WhyBetter.Count);
-        Assert.Equal(2, response.MissingContext.Count);
-        Assert.Equal("promptforge:2b", response.Model);
+        Assert.Equal("Act as a senior ATS resume writer...", response.ShortVersion);
+        Assert.Single(response.WhyBetter);
+        Assert.Empty(response.MissingContext);
+        Assert.Equal("qwen3.5:2b", response.Model);
     }
 
     [Fact]
-    public async Task ImproveAsyncReturnsFallbackWhenModelOutputIsNotJson()
+    public async Task ImproveAsyncUsesPlainGeneratedText()
     {
         var service = CreateService(new FakeOllamaService("Here is an improved prompt without JSON."));
 
@@ -40,20 +33,13 @@ public sealed class PromptOptimizerServiceTests
             CancellationToken.None);
 
         Assert.Equal("Here is an improved prompt without JSON.", response.ImprovedPrompt);
-        Assert.Contains("could not be parsed", response.WhyBetter[0]);
+        Assert.Equal("Here is an improved prompt without JSON.", response.ShortVersion);
     }
 
     [Fact]
     public async Task ImproveAsyncRejectsSecondRequestWhenModelIsBusy()
     {
-        var ollama = new FakeOllamaService("""
-            {
-              "improvedPrompt": "Improved",
-              "shortVersion": "Short",
-              "whyBetter": ["Clearer"],
-              "missingContext": []
-            }
-            """)
+        var ollama = new FakeOllamaService("Improved prompt")
         {
             Delay = TimeSpan.FromMilliseconds(200)
         };
@@ -75,7 +61,7 @@ public sealed class PromptOptimizerServiceTests
         return new PromptOptimizerService(
             ollamaService,
             gate ?? new ModelConcurrencyGate(),
-            Options.Create(new OllamaOptions { Model = "promptforge:2b" }));
+            Options.Create(new OllamaOptions { Model = "qwen3.5:2b" }));
     }
 
     private sealed class FakeOllamaService : IOllamaService
@@ -89,10 +75,10 @@ public sealed class PromptOptimizerServiceTests
 
         public TimeSpan Delay { get; init; } = TimeSpan.Zero;
 
-        public async Task<string> ChatAsync(IReadOnlyList<OllamaMessage> messages, CancellationToken cancellationToken)
+        public async Task<string> GenerateAsync(string prompt, CancellationToken cancellationToken)
         {
-            Assert.Contains(messages, message => message.Role == "system" && message.Content.Contains("Do not answer"));
-            Assert.Contains(messages, message => message.Role == "user" && message.Content.Contains("Return JSON only"));
+            Assert.Contains("Do not answer", prompt);
+            Assert.Contains("Return only the improved prompt", prompt);
 
             if (Delay > TimeSpan.Zero)
             {
