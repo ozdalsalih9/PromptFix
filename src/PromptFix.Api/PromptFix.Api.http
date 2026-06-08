@@ -1,0 +1,16 @@
+@PromptFix.Api_HostAddress = http://localhost:5064
+
+GET {{PromptFix.Api_HostAddress}}/api/health
+Accept: application/json
+
+###
+
+POST {{PromptFix.Api_HostAddress}}/api/prompt/improve
+Content-Type: application/json
+
+{
+  "prompt": "bana cv hazirla",
+  "mode": "career",
+  "language": "auto",
+  "style": "professional"
+}

@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "PromptForge",
+  "version": "0.1.0",
+  "description": "Improve rough prompts into clear, ready-to-use prompts.",
+  "action": {
+    "default_title": "PromptForge",
+    "default_popup": "index.html"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "http://localhost:5064/*",
+    "http://127.0.0.1:5064/*",
+    "https://api.promptfix.app/*"
+  ]
+}

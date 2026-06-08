@@ -1,0 +1,267 @@
+.popup-shell {
+  width: 420px;
+  max-width: 100vw;
+  min-height: 560px;
+  padding: 18px;
+  box-sizing: border-box;
+  background: #f8fafc;
+  color: #18212f;
+}
+
+.app-header,
+.history-header,
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.app-header {
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 2px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: #111827;
+  font-size: 24px;
+  line-height: 1.15;
+  font-weight: 750;
+  letter-spacing: 0;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.prompt-form {
+  display: grid;
+  gap: 12px;
+}
+
+.field-block,
+.control-grid label {
+  display: grid;
+  gap: 6px;
+}
+
+label span,
+.section-heading {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+textarea,
+select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  font: inherit;
+  letter-spacing: 0;
+  outline: none;
+}
+
+textarea {
+  min-height: 132px;
+  resize: vertical;
+  padding: 11px 12px;
+  line-height: 1.45;
+}
+
+select {
+  height: 38px;
+  padding: 0 10px;
+}
+
+textarea:focus,
+select:focus {
+  border-color: #0f766e;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+}
+
+.control-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.control-grid label:last-child {
+  grid-column: 1 / -1;
+}
+
+.primary-button,
+.icon-button,
+.history-item {
+  border: 0;
+  font: inherit;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  border-radius: 8px;
+  background: #0f766e;
+  color: #ffffff;
+  font-weight: 750;
+}
+
+.primary-button:disabled,
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+}
+
+.spin {
+  animation: spin 0.85s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-box {
+  margin-top: 12px;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #991b1b;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.result-stack,
+.history-section {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.output-block,
+.reason-box {
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.output-block-primary {
+  border-color: #99f6e4;
+  background: #f0fdfa;
+}
+
+.output-block p,
+.reason-box ul,
+.empty-state {
+  margin: 8px 0 0;
+  color: #1f2937;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.reason-box ul {
+  padding-left: 18px;
+}
+
+.reason-box p,
+.model-note {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.reason-box li + li {
+  margin-top: 5px;
+}
+
+.history-section {
+  border-top: 1px solid #d7dee8;
+  padding-top: 14px;
+}
+
+.empty-state {
+  color: #64748b;
+  white-space: normal;
+}
+
+.history-list {
+  display: grid;
+  gap: 8px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.history-item {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d7dee8;
+  border-radius: 8px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.history-item span {
+  overflow: hidden;
+  color: #1f2937;
+  font-size: 13px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-item small {
+  color: #64748b;
+  font-size: 11px;
+}
