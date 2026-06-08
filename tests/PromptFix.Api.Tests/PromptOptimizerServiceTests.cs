@@ -37,6 +37,23 @@ public sealed class PromptOptimizerServiceTests
     }
 
     [Fact]
+    public async Task ImproveAsyncCleansThinkingFallbackOutput()
+    {
+        var service = CreateService(new FakeOllamaService("""
+            Thinking Process:
+            analyze the request
+
+            Prompt: Act as a senior resume writer and create a concise CV.
+            """));
+
+        var response = await service.ImproveAsync(
+            new PromptImproveRequest("make cv", "career", "en", "balanced"),
+            CancellationToken.None);
+
+        Assert.Equal("Prompt: Act as a senior resume writer and create a concise CV.", response.ImprovedPrompt);
+    }
+
+    [Fact]
     public async Task ImproveAsyncRejectsSecondRequestWhenModelIsBusy()
     {
         var ollama = new FakeOllamaService("Improved prompt")

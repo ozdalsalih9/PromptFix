@@ -36,7 +36,9 @@ public sealed class OllamaService : IOllamaService
             response.EnsureSuccessStatusCode();
 
             var ollamaResponse = await response.Content.ReadFromJsonAsync<OllamaGenerateResponse>(cancellationToken);
-            var content = ollamaResponse?.Response;
+            var content = string.IsNullOrWhiteSpace(ollamaResponse?.Response)
+                ? ollamaResponse?.Thinking
+                : ollamaResponse.Response;
 
             if (string.IsNullOrWhiteSpace(content))
             {

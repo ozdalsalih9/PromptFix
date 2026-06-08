@@ -38,12 +38,12 @@ public sealed class PromptOptimizerService : IPromptOptimizerService
         var language = PromptOptionCatalog.Languages[request.Language!];
         var style = PromptOptionCatalog.Styles[request.Style!];
 
-        return $"Rewrite this weak prompt into a better prompt. Do not answer the request. Return only the improved prompt. Mode: {mode}. Language: {language}. Style: {style}. Prompt: {request.Prompt!.Trim()}";
+        return $"Rewrite this weak prompt into a better prompt. Do not answer the request. Do not explain. Return only the improved prompt. Mode: {mode}. Language: {language}. Style: {style}. Prompt: {request.Prompt!.Trim()}";
     }
 
     private PromptImproveResponse BuildResponse(string improvedPrompt)
     {
-        var normalized = improvedPrompt.Trim();
+        var normalized = CleanModelOutput(improvedPrompt);
 
         return new PromptImproveResponse(
             normalized,
@@ -51,5 +51,18 @@ public sealed class PromptOptimizerService : IPromptOptimizerService
             ["Rewrites the request as a clearer, copy-paste-ready prompt."],
             [],
             _options.Model);
+    }
+
+    private static string CleanModelOutput(string value)
+    {
+        var normalized = value.Trim();
+        var promptMarker = normalized.LastIndexOf("Prompt:", StringComparison.OrdinalIgnoreCase);
+
+        if (normalized.Contains("Thinking Process", StringComparison.OrdinalIgnoreCase) && promptMarker >= 0)
+        {
+            return normalized[promptMarker..].Trim();
+        }
+
+        return normalized;
     }
 }
