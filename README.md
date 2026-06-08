@@ -100,6 +100,32 @@ curl -X POST http://localhost:5064/api/prompt/improve \
   -d '{"prompt":"bana cv hazirla","mode":"career","language":"auto","style":"professional"}'
 ```
 
+## Docker Setup
+
+Use this on a Linux VPS when Ollama is already installed on the host. The compose file uses `network_mode: host` so the API container can reach host Ollama at `127.0.0.1:11434`.
+
+```bash
+git clone https://github.com/ozdalsalih9/PromptFix.git
+cd PromptFix
+ollama list
+ollama create promptforge:4b -f ollama/Modelfile.promptforge
+docker compose up -d --build
+```
+
+Check logs and health:
+
+```bash
+docker logs -f promptforge-api
+curl http://127.0.0.1:5064/api/health
+```
+
+Pull latest changes and redeploy:
+
+```bash
+git pull
+docker compose up -d --build
+```
+
 ## Extension Setup
 
 ```powershell

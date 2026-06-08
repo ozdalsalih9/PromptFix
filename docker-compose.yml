@@ -1,0 +1,14 @@
+services:
+  promptforge-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: promptforge-api:latest
+    container_name: promptforge-api
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_URLS: http://127.0.0.1:5064
+      OLLAMA__BASEURL: http://127.0.0.1:11434
+      OLLAMA__MODEL: promptforge:4b
+      OLLAMA__TIMEOUTSECONDS: 60

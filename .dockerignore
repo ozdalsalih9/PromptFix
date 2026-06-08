@@ -1,0 +1,14 @@
+.git
+.vs
+.vscode
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.vite
+TestResults
+coverage
+.env
+.env.*
+!.env.example
+*.log
