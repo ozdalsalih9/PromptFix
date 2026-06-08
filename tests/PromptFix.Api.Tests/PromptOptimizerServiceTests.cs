@@ -27,7 +27,7 @@ public sealed class PromptOptimizerServiceTests
         Assert.Equal("Create an ATS-friendly CV.", response.ShortVersion);
         Assert.Equal(2, response.WhyBetter.Count);
         Assert.Equal(2, response.MissingContext.Count);
-        Assert.Equal("promptforge:4b", response.Model);
+        Assert.Equal("promptforge:2b", response.Model);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public sealed class PromptOptimizerServiceTests
         return new PromptOptimizerService(
             ollamaService,
             gate ?? new ModelConcurrencyGate(),
-            Options.Create(new OllamaOptions { Model = "promptforge:4b" }));
+            Options.Create(new OllamaOptions { Model = "promptforge:2b" }));
     }
 
     private sealed class FakeOllamaService : IOllamaService

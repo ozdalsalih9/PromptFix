@@ -1,8 +1,8 @@
-FROM qwen3.5:4b
+FROM qwen3.5:2b
 
 PARAMETER temperature 0.3
 PARAMETER top_p 0.9
-PARAMETER num_ctx 2048
+PARAMETER num_ctx 1536
 PARAMETER num_predict 350
 
 SYSTEM """
@@ -17,8 +17,8 @@ Rules:
 - Preserve the user's language.
 - If the user writes in Turkish, respond in Turkish.
 - If the user writes in English, respond in English.
-- Add useful structure: role, task, context, constraints, tone, and output format.
-- Make the improved prompt copy-paste ready.
-- If important information is missing, add a short "Eksik Bilgiler" or "Missing Context" section.
-- Keep the answer practical and not too long.
+- Return clean JSON only.
+- Keep the answer short and practical.
+- Use this exact JSON shape:
+  {"improvedPrompt":"string","shortVersion":"string","whyBetter":["string"],"missingContext":["string"]}
 """
