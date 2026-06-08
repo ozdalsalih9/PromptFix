@@ -92,7 +92,7 @@ public sealed class PromptOptimizerServiceTests
         public async Task<string> ChatAsync(IReadOnlyList<OllamaMessage> messages, CancellationToken cancellationToken)
         {
             Assert.Contains(messages, message => message.Role == "system" && message.Content.Contains("Do not answer"));
-            Assert.Contains(messages, message => message.Role == "user" && message.Content.Contains("Required JSON shape"));
+            Assert.Contains(messages, message => message.Role == "user" && message.Content.Contains("Return JSON only"));
 
             if (Delay > TimeSpan.Zero)
             {

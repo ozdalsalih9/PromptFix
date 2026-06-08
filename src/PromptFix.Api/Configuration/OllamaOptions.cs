@@ -8,13 +8,13 @@ public sealed class OllamaOptions
 
     public string Model { get; set; } = "promptforge:2b";
 
-    public int TimeoutSeconds { get; set; } = 120;
+    public int TimeoutSeconds { get; set; } = 90;
 
     public double Temperature { get; set; } = 0.3;
 
-    public int NumContext { get; set; } = 1536;
+    public int NumContext { get; set; } = 1024;
 
-    public int NumPredict { get; set; } = 350;
+    public int NumPredict { get; set; } = 180;
 
     public double TopP { get; set; } = 0.9;
 }

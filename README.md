@@ -73,7 +73,7 @@ Default config is in `src/PromptFix.Api/appsettings.json`:
   "Ollama": {
     "BaseUrl": "http://localhost:11434",
     "Model": "promptforge:2b",
-    "TimeoutSeconds": 120
+    "TimeoutSeconds": 90
   }
 }
 ```
@@ -83,7 +83,7 @@ Environment variable overrides:
 ```powershell
 $env:OLLAMA__BASEURL="http://localhost:11434"
 $env:OLLAMA__MODEL="promptforge:2b"
-$env:OLLAMA__TIMEOUTSECONDS="120"
+$env:OLLAMA__TIMEOUTSECONDS="90"
 dotnet run --project src/PromptFix.Api
 ```
 
@@ -165,6 +165,8 @@ Load `apps/extension/dist` in Chrome:
 The backend uses `SemaphoreSlim` to allow only one LLM request at a time. This is intentional for the current VPS size: 8 GB RAM, 4 vCPU, 75 GB disk.
 
 If a request is already running, the API returns HTTP `429` with a friendly message instead of queueing many expensive model calls.
+
+The default 2B profile is tuned for speed with a smaller context and shorter output. If quality is more important than latency, increase `OLLAMA__NUMPREDICT` and `OLLAMA__NUMCONTEXT`.
 
 ## Development Commands
 

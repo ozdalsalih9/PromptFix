@@ -42,35 +42,22 @@ public sealed class PromptOptimizerService : IPromptOptimizerService
         var style = PromptOptionCatalog.Styles[request.Style!];
 
         var systemPrompt = """
-            You are PromptForge, a local prompt optimization engine.
-            Your job is to rewrite weak, vague, messy, or incomplete user prompts into clear, structured, high-quality prompts.
-            Do not answer the user's original request.
-            Only improve the prompt.
-            Preserve the user's intent.
-            Preserve the user's language.
-            If the input is Turkish, respond in Turkish.
-            If the input is English, respond in English.
-            Add useful structure: role, task, context, constraints, tone, and output format.
-            Make the improved prompt copy-paste ready.
-            If important information is missing, add a short missing context section.
-            Return clean JSON only with these exact fields:
-            improvedPrompt, shortVersion, whyBetter, missingContext.
+            /no_think
+            You are PromptForge. Rewrite weak prompts into better prompts.
+            Do not answer the original task.
+            Do not think step by step.
+            Do not output analysis, reasoning, markdown, or explanations outside JSON.
+            Return one compact JSON object only:
+            {"improvedPrompt":"string","shortVersion":"string","whyBetter":["string"],"missingContext":["string"]}
             """;
 
         var userPrompt = $$"""
+            /no_think
             Mode: {{mode}}
             Language: {{language}}
             Style: {{style}}
 
-            Required JSON shape:
-            {
-              "improvedPrompt": "string",
-              "shortVersion": "string",
-              "whyBetter": ["string"],
-              "missingContext": ["string"]
-            }
-
-            Original prompt:
+            Rewrite this prompt. Return JSON only:
             {{request.Prompt!.Trim()}}
             """;
 
