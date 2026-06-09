@@ -18,7 +18,9 @@ public sealed class PromptOptimizerServiceTests
 
         Assert.Equal("Act as a senior ATS resume writer...", response.ImprovedPrompt);
         Assert.Equal("Act as a senior ATS resume writer...", response.ShortVersion);
-        Assert.Single(response.WhyBetter);
+        Assert.Equal(3, response.WhyBetter.Count);
+        Assert.Contains(response.WhyBetter, item => item.Contains("career", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(response.WhyBetter, item => item.Contains("professional", StringComparison.OrdinalIgnoreCase));
         Assert.Empty(response.MissingContext);
         Assert.Equal("qwen3.5:2b", response.Model);
     }
@@ -65,6 +67,44 @@ public sealed class PromptOptimizerServiceTests
         Assert.Equal("Act as a cat behavior specialist and explain safe next steps.", response.ImprovedPrompt);
     }
 
+    [Theory]
+    [InlineData("general", "most relevant expert assistant")]
+    [InlineData("coding", "senior software engineer")]
+    [InlineData("career", "career coach")]
+    [InlineData("academic", "academic writing or research assistant")]
+    [InlineData("image", "image generation model")]
+    [InlineData("email", "professional writing assistant")]
+    public async Task ImproveAsyncAppliesModeSpecificRewriteRules(string mode, string expectedRule)
+    {
+        var ollama = new FakeOllamaService("Improved prompt");
+        var service = CreateService(ollama);
+
+        await service.ImproveAsync(
+            new PromptImproveRequest("make this better", mode, "en", "balanced"),
+            CancellationToken.None);
+
+        Assert.Contains("MODE_RULES:", ollama.LastPrompt);
+        Assert.Contains(expectedRule, ollama.LastPrompt, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("balanced", "Balance clarity")]
+    [InlineData("concise", "1 or 2 sentences")]
+    [InlineData("detailed", "4 to 7 sentences")]
+    [InlineData("professional", "not a professional answer to the user")]
+    public async Task ImproveAsyncAppliesStyleSpecificRewriteRules(string style, string expectedRule)
+    {
+        var ollama = new FakeOllamaService("Improved prompt");
+        var service = CreateService(ollama);
+
+        await service.ImproveAsync(
+            new PromptImproveRequest("make this better", "general", "en", style),
+            CancellationToken.None);
+
+        Assert.Contains("STYLE_RULES:", ollama.LastPrompt);
+        Assert.Contains(expectedRule, ollama.LastPrompt, StringComparison.OrdinalIgnoreCase);
+    }
+
     [Fact]
     public async Task ImproveAsyncRejectsSecondRequestWhenModelIsBusy()
     {
@@ -103,11 +143,15 @@ public sealed class PromptOptimizerServiceTests
         }
 
         public TimeSpan Delay { get; init; } = TimeSpan.Zero;
+        public string LastPrompt { get; private set; } = string.Empty;
 
         public async Task<string> GenerateAsync(string prompt, CancellationToken cancellationToken)
         {
+            LastPrompt = prompt;
+
             Assert.Contains("Never answer USER_DRAFT", prompt);
             Assert.Contains("Return only the improved prompt text", prompt);
+            Assert.Contains("The selected mode and style are rewrite controls", prompt);
 
             if (Delay > TimeSpan.Zero)
             {
