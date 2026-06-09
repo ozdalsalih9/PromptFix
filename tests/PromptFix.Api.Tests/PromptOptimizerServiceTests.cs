@@ -43,14 +43,26 @@ public sealed class PromptOptimizerServiceTests
             Thinking Process:
             analyze the request
 
-            Prompt: Act as a senior resume writer and create a concise CV.
+            IMPROVED_PROMPT: Act as a senior resume writer and create a concise CV.
             """));
 
         var response = await service.ImproveAsync(
             new PromptImproveRequest("make cv", "career", "en", "balanced"),
             CancellationToken.None);
 
-        Assert.Equal("Prompt: Act as a senior resume writer and create a concise CV.", response.ImprovedPrompt);
+        Assert.Equal("Act as a senior resume writer and create a concise CV.", response.ImprovedPrompt);
+    }
+
+    [Fact]
+    public async Task ImproveAsyncRemovesGeneratedOutputLabel()
+    {
+        var service = CreateService(new FakeOllamaService("Improved prompt: Act as a cat behavior specialist and explain safe next steps."));
+
+        var response = await service.ImproveAsync(
+            new PromptImproveRequest("kedi beni isirmaya calisiyor ne yapayim", "general", "tr", "balanced"),
+            CancellationToken.None);
+
+        Assert.Equal("Act as a cat behavior specialist and explain safe next steps.", response.ImprovedPrompt);
     }
 
     [Fact]
@@ -94,8 +106,8 @@ public sealed class PromptOptimizerServiceTests
 
         public async Task<string> GenerateAsync(string prompt, CancellationToken cancellationToken)
         {
-            Assert.Contains("Do not answer", prompt);
-            Assert.Contains("Return only the improved prompt", prompt);
+            Assert.Contains("Never answer USER_DRAFT", prompt);
+            Assert.Contains("Return only the improved prompt text", prompt);
 
             if (Delay > TimeSpan.Zero)
             {
