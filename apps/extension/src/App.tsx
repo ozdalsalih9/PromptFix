@@ -205,11 +205,16 @@ function App() {
   return (
     <main className="popup-shell">
       <header className="app-header">
-        <div>
-          <p className="eyebrow">PromptForge</p>
-          <h1>Improve a prompt</h1>
+        <div className="brand-lockup">
+          <span className="logo-frame">
+            <img src="logo.png" alt="" />
+          </span>
+          <div>
+            <p className="eyebrow">PromptForge</p>
+            <h1>Improve a prompt</h1>
+          </div>
         </div>
-        <span className="status-pill">MVP</span>
+        <span className="status-pill">Live</span>
       </header>
 
       <form className="prompt-form" onSubmit={onSubmit}>
@@ -262,6 +267,9 @@ function App() {
           {isLoading ? <Loader2 className="spin" size={18} /> : <WandSparkles size={18} />}
           Improve Prompt
         </button>
+        <p className="latency-note">
+          {isLoading ? 'Working on your prompt. This can take around 30 seconds.' : 'Responses can take around 30 seconds.'}
+        </p>
       </form>
 
       {error ? <div className="error-box">{error}</div> : null}

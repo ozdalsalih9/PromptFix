@@ -21,10 +21,6 @@
   },
   "permissions": ["storage"],
   "host_permissions": [
-    "http://localhost:5064/*",
-    "http://127.0.0.1:5064/*",
-    "https://promptfix.duckdns.org/*",
-    "https://*.duckdns.org/*",
-    "https://api.promptfix.app/*"
+    "https://promptfix.duckdns.org/*"
   ]
 }

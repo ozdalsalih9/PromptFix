@@ -4,8 +4,10 @@
   min-height: 560px;
   padding: 18px;
   box-sizing: border-box;
-  background: #f8fafc;
-  color: #18212f;
+  background:
+    linear-gradient(180deg, rgba(0, 204, 238, 0.11), rgba(244, 248, 255, 0) 150px),
+    #f4f8ff;
+  color: #12243d;
 }
 
 .app-header,
@@ -18,12 +20,39 @@
 }
 
 .app-header {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+}
+
+.brand-lockup {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 12px;
+}
+
+.logo-frame {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  border: 1px solid rgba(0, 174, 239, 0.28);
+  border-radius: 8px;
+  background: linear-gradient(145deg, #ffffff, #eaf7ff);
+  box-shadow: 0 10px 26px rgba(0, 91, 187, 0.14);
+  overflow: hidden;
+}
+
+.logo-frame img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
 }
 
 .eyebrow {
   margin: 0 0 2px;
-  color: #0f766e;
+  color: #f97316;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0;
@@ -32,8 +61,8 @@
 
 h1 {
   margin: 0;
-  color: #111827;
-  font-size: 24px;
+  color: #0b1f3a;
+  font-size: 23px;
   line-height: 1.15;
   font-weight: 750;
   letter-spacing: 0;
@@ -46,10 +75,10 @@ h1 {
   min-width: 44px;
   min-height: 28px;
   padding: 0 10px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(0, 174, 239, 0.28);
   border-radius: 999px;
   background: #ffffff;
-  color: #475569;
+  color: #0069c9;
   font-size: 12px;
   font-weight: 700;
 }
@@ -67,7 +96,7 @@ h1 {
 
 label span,
 .section-heading {
-  color: #334155;
+  color: #19385f;
   font-size: 12px;
   font-weight: 750;
   letter-spacing: 0;
@@ -81,7 +110,7 @@ select {
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #ffffff;
-  color: #111827;
+  color: #0b1f3a;
   font: inherit;
   letter-spacing: 0;
   outline: none;
@@ -101,8 +130,8 @@ select {
 
 textarea:focus,
 select:focus {
-  border-color: #0f766e;
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  border-color: #00aeee;
+  box-shadow: 0 0 0 3px rgba(0, 174, 239, 0.18);
 }
 
 .control-grid {
@@ -131,15 +160,28 @@ select:focus {
   gap: 8px;
   min-height: 42px;
   border-radius: 8px;
-  background: #0f766e;
+  background: linear-gradient(135deg, #00c9e8, #0067d9 62%, #0046b8);
   color: #ffffff;
   font-weight: 750;
+  box-shadow: 0 10px 22px rgba(0, 103, 217, 0.22);
+}
+
+.primary-button:not(:disabled):hover {
+  background: linear-gradient(135deg, #10d9f4, #0875e8 62%, #0055cc);
 }
 
 .primary-button:disabled,
 .icon-button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
+}
+
+.latency-note {
+  margin: -4px 0 0;
+  color: #58708e;
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: center;
 }
 
 .icon-button {
@@ -152,7 +194,7 @@ select:focus {
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #ffffff;
-  color: #334155;
+  color: #0069c9;
 }
 
 .spin {
@@ -186,22 +228,22 @@ select:focus {
 
 .output-block,
 .reason-box {
-  border: 1px solid #d7dee8;
+  border: 1px solid #d5e3f3;
   border-radius: 8px;
   background: #ffffff;
   padding: 12px;
 }
 
 .output-block-primary {
-  border-color: #99f6e4;
-  background: #f0fdfa;
+  border-color: rgba(0, 201, 232, 0.42);
+  background: linear-gradient(180deg, #effcff, #ffffff);
 }
 
 .output-block p,
 .reason-box ul,
 .empty-state {
   margin: 8px 0 0;
-  color: #1f2937;
+  color: #18304f;
   font-size: 13px;
   line-height: 1.5;
   white-space: pre-wrap;
@@ -215,7 +257,7 @@ select:focus {
 .reason-box p,
 .model-note {
   margin: 8px 0 0;
-  color: #64748b;
+  color: #58708e;
   font-size: 12px;
   line-height: 1.45;
 }
@@ -225,12 +267,12 @@ select:focus {
 }
 
 .history-section {
-  border-top: 1px solid #d7dee8;
+  border-top: 1px solid #d5e3f3;
   padding-top: 14px;
 }
 
 .empty-state {
-  color: #64748b;
+  color: #58708e;
   white-space: normal;
 }
 
@@ -246,7 +288,7 @@ select:focus {
   gap: 4px;
   width: 100%;
   padding: 10px;
-  border: 1px solid #d7dee8;
+  border: 1px solid #d5e3f3;
   border-radius: 8px;
   background: #ffffff;
   text-align: left;
@@ -254,7 +296,7 @@ select:focus {
 
 .history-item span {
   overflow: hidden;
-  color: #1f2937;
+  color: #18304f;
   font-size: 13px;
   line-height: 1.35;
   text-overflow: ellipsis;
@@ -262,6 +304,6 @@ select:focus {
 }
 
 .history-item small {
-  color: #64748b;
+  color: #58708e;
   font-size: 11px;
 }
