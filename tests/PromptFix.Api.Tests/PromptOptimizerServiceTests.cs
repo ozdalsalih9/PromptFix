@@ -149,9 +149,10 @@ public sealed class PromptOptimizerServiceTests
         {
             LastPrompt = prompt;
 
-            Assert.Contains("Never answer USER_DRAFT", prompt);
+            Assert.Contains("Do not answer USER_DRAFT", prompt);
             Assert.Contains("Return only the improved prompt text", prompt);
-            Assert.Contains("The selected mode and style are rewrite controls", prompt);
+            Assert.Contains("MODE_RULES:", prompt);
+            Assert.Contains("STYLE_RULES:", prompt);
 
             if (Delay > TimeSpan.Zero)
             {

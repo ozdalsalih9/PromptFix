@@ -163,6 +163,23 @@ curl https://promptfix.duckdns.org/api/health
 
 Only ports `80` and `443` need to be public. Keep `5064` and `11434` private.
 
+If another Dockerized Caddy instance already owns ports `80` and `443`, add the `promptfix.duckdns.org` block to that existing Caddyfile instead of starting a second Caddy service. In that case, bind PromptFix to the Docker bridge gateway so the Caddy container can reach it:
+
+```bash
+echo 'PROMPTFIX_BIND_URL=http://172.18.0.1:5064' > .env
+docker compose up -d --build
+curl http://172.18.0.1:5064/api/health
+```
+
+Then add this block to the existing Caddyfile:
+
+```caddy
+promptfix.duckdns.org {
+    encode zstd gzip
+    reverse_proxy 172.18.0.1:5064
+}
+```
+
 ## Extension Setup
 
 For local testing, you do not need a domain. Keep the API available on your own machine at `http://localhost:5064`, either by running the backend locally or by opening an SSH tunnel to the VPS:

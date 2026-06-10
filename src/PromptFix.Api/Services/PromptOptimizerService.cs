@@ -41,24 +41,20 @@ public sealed class PromptOptimizerService : IPromptOptimizerService
         var styleRules = GetStyleRules(request.Style!);
 
         return $"""
-            You are PromptForge, a prompt rewriting engine.
+            You are PromptForge. Rewrite USER_DRAFT into a better prompt for another AI assistant.
+            Do not answer USER_DRAFT. Do not give advice, facts, warnings, solutions, markdown, labels, JSON, or quotes.
+            Return only the improved prompt text. It must read like an instruction to another AI assistant.
 
-            Your only job is to transform USER_DRAFT into a stronger prompt for another AI assistant.
-            Never answer USER_DRAFT.
-            Never give advice, facts, solutions, warnings, or explanations about USER_DRAFT.
-            Never write as if you are responding to the user directly.
-            Return only the improved prompt text. Do not use markdown, labels, JSON, or quotes.
-            The selected mode and style are rewrite controls. They are not permission to answer the user.
+            Language: {language}
+            Mode: {mode}
+            Style: {style}
 
-            GLOBAL_RULES:
-            - Preserve the user's original intent.
-            - Preserve the selected language: {language}.
-            - Match the selected mode: {mode}.
-            - Match the selected style: {style}.
-            - Start with a useful expert role when appropriate.
-            - Ask the future AI assistant for a practical, structured answer.
-            - Add missing context requirements as questions or assumptions inside the prompt.
+            Global rewrite rules:
+            - Preserve the user's intent.
+            - Add a useful expert role when helpful.
+            - Ask for a practical, structured answer and include missing context requests.
             - If the draft asks what to do, rewrite it as a prompt asking another AI to explain what to do.
+            - Keep the improved prompt concise enough for quick inference.
 
             MODE_RULES:
             {modeRules}
@@ -66,19 +62,7 @@ public sealed class PromptOptimizerService : IPromptOptimizerService
             STYLE_RULES:
             {styleRules}
 
-            FINAL_CHECK:
-            The output must read like an instruction to another AI assistant, not like the assistant's answer.
-
-            Examples:
-            USER_DRAFT: kedi beni isirmaya calisiyor ne yapayim
-            IMPROVED_PROMPT: Bir kedi davranisi uzmani gibi davran. Kedimin beni isirmaya calismasinin olasi nedenlerini acikla, acil risk isaretlerini belirt ve guvenli sekilde ne yapmam gerektigini adim adim anlat. Cevabinda kedinin yasi, kisir olup olmadigi, isirma davranisinin ne zaman basladigi, oyun mu saldirganlik mi oldugu ve ortamda stres kaynagi bulunup bulunmadigi gibi eksik bilgileri de sor.
-
-            USER_DRAFT: bana cv hazirla
-            IMPROVED_PROMPT: Bir ATS odakli kariyer danismani gibi davran. Bana profesyonel ve net bir CV taslagi hazirlamak icin once hedef pozisyonumu, deneyimlerimi, egitimimi, teknik becerilerimi, basarilarimi ve tercih ettigim dili sor. Ardindan bu bilgilere gore baslik, ozet, deneyim, egitim, beceriler ve projeler bolumlerinden olusan duzenli bir CV metni uret.
-
-            USER_DRAFT:
-            {request.Prompt!.Trim()}
-
+            USER_DRAFT: {request.Prompt!.Trim()}
             IMPROVED_PROMPT:
             """;
     }
@@ -123,7 +107,7 @@ public sealed class PromptOptimizerService : IPromptOptimizerService
             "image" => """
                 - Make the prompt suitable for an image generation model.
                 - Include subject, setting, composition, visual style, lighting, color palette, camera/framing, mood, and constraints.
-                - Do not ask for advice about the image; ask for an image prompt or image output.
+                - If the draft refers to an existing image, write an image-editing prompt and ask the assistant to improve the provided image.
                 """,
             "email" => """
                 - Make the prompt address a professional writing assistant.

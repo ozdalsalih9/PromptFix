@@ -1,5 +1,5 @@
 promptfix.duckdns.org {
     encode zstd gzip
 
-    reverse_proxy 127.0.0.1:5064
+    reverse_proxy 172.18.0.1:5064
 }
