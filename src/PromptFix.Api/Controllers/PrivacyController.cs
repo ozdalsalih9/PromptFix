@@ -6,6 +6,7 @@ namespace PromptFix.Api.Controllers;
 public sealed class PrivacyController : ControllerBase
 {
     [HttpGet("/privacy")]
+    [HttpHead("/privacy")]
     public ContentResult Privacy()
     {
         const string html = """
