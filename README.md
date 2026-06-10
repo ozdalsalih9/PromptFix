@@ -123,7 +123,53 @@ git pull
 docker compose up -d --build
 ```
 
+## Production Setup With DuckDNS And Caddy
+
+Use this flow when the API should be reachable by the Chrome extension over HTTPS.
+
+1. Create a DuckDNS subdomain, for example:
+
+```text
+promptfix.duckdns.org
+```
+
+Point it to the VPS public IP.
+
+2. Keep the API private on the VPS:
+
+```bash
+docker compose up -d --build
+curl http://127.0.0.1:5064/api/health
+```
+
+3. Install Caddy on the VPS and create `/etc/caddy/Caddyfile`:
+
+```caddy
+promptfix.duckdns.org {
+    encode zstd gzip
+    reverse_proxy 127.0.0.1:5064
+}
+```
+
+There is also a repo template at `deploy/caddy/Caddyfile.example`.
+
+4. Reload Caddy and test HTTPS:
+
+```bash
+sudo caddy validate --config /etc/caddy/Caddyfile
+sudo systemctl reload caddy
+curl https://promptfix.duckdns.org/api/health
+```
+
+Only ports `80` and `443` need to be public. Keep `5064` and `11434` private.
+
 ## Extension Setup
+
+For local testing, you do not need a domain. Keep the API available on your own machine at `http://localhost:5064`, either by running the backend locally or by opening an SSH tunnel to the VPS:
+
+```bash
+ssh -N -L 5064:127.0.0.1:5064 root@89.117.51.38
+```
 
 ```powershell
 cd apps/extension
@@ -136,7 +182,7 @@ Build for Chrome:
 
 ```powershell
 cd apps/extension
-$env:VITE_API_BASE_URL="https://your-api-domain.com"
+$env:VITE_API_BASE_URL="http://localhost:5064"
 npm run build
 ```
 
@@ -146,6 +192,16 @@ Load `apps/extension/dist` in Chrome:
 2. Enable Developer Mode
 3. Click "Load unpacked"
 4. Select `apps/extension/dist`
+
+For public distribution or Chrome Web Store use, put the API behind HTTPS and build the extension with that API URL:
+
+```powershell
+cd apps/extension
+$env:VITE_API_BASE_URL="https://promptfix.duckdns.org"
+npm run build
+```
+
+The domain must also be listed in `apps/extension/public/manifest.json` under `host_permissions`, and the backend must allow `chrome-extension://` origins through CORS.
 
 ## Security Notes
 
